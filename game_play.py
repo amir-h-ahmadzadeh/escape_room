@@ -1,3 +1,81 @@
+class item:
+    object_relations = list()
+    def __init__(self, name, type):
+        self.name = name
+        self.type = type
+
+class furniture(item):
+    def __init__(self, name, type):
+        super().__init__(name, type = 'furniture')
+    def hidden_items(self, key=[]):
+        self.object_relations.append(key)
+        
+        
+
+class door(item):
+    def __init__(self, name, type):
+        super().__init__(name, type = 'door')
+    def connected_rooms(self, *rooms):
+        self.object_relations.append(rooms)
+
+
+class key(item):
+    def __init__(self, name, type, targeted_door):
+        super().__init__(name, type = 'key')
+        self.targeted_door = targeted_door
+
+
+class room(item):
+    def __init__(self, name, type):
+        super().__init__(name, type = 'room')
+    def items_inside(self, *item):
+        self.object_relations.append(item)
+
+       
+
+outside = room('ouside', 'room')
+living_room = room('living room', 'room')
+game_room = room('game room', 'room')
+bedroom_1 = room('bedroom 1', 'room')
+bedroom_2 = room('bedroom 2', 'room')
+
+dining_table = furniture('dining table', 'furniture')
+couch = furniture('couch', 'furniture')
+piano = furniture('piano', 'furniture')
+queen_bed = furniture('queen bed', 'furniture')
+double_bed = furniture('double bed', 'furniture')
+dresser = furniture('dresser', 'furniture')
+
+door_a = door('door a', 'door')
+door_b = door('door b', 'door')
+door_c = door('door c', 'door')
+door_d = door('door d', 'door')
+
+key_a = key('key a', 'key', door_a)
+key_b = key('key b', 'key', door_b)
+key_c = key('key c', 'key', door_c)
+key_d = key('key d', 'key', door_d)
+
+living_room.items_inside(dining_table, door_d)
+game_room.items_inside(couch, piano, door_a)
+bedroom_1.items_inside(queen_bed, door_a, door_b, door_c)
+bedroom_2.items_inside(double_bed, dresser, door_b)
+
+piano.hidden_items(key_a)
+queen_bed.hidden_items(key_b)
+double_bed.hidden_items(key_c)
+dresser.hidden_items(key_d)
+
+door_a.connected_rooms(game_room, bedroom_1)
+door_b.connected_rooms(bedroom_1, bedroom_2)
+door_c.connected_rooms(bedroom_1, living_room)
+door_d.connected_rooms(living_room, outside)
+
+
+
+
+
+"""
 #Living_room:
 living_room = {
     "name": "living room",
@@ -99,10 +177,11 @@ outside = {
   "name": "outside"
 }
 
-all_rooms = [game_room, bedroom1, bedroom2, living_room, outside]
+#all_rooms = [game_room, bedroom1, bedroom2, living_room, outside]
 
-all_doors = [door_a, door_b, door_c, door_d]
-
+#all_doors = [door_a, door_b, door_c, door_d]
+"""
+"""
 
 object_relations = {
     "game room" : [couch, piano, door_a],
@@ -119,6 +198,7 @@ object_relations = {
     "door_d" : [living_room, outside],
     "outside" : [door_d],
 }
+"""
 INIT_GAME_STATE = {
     "current_room": game_room,
     "keys_collected": [],
@@ -170,9 +250,9 @@ def get_next_room_of_door(door, current_room):
     Return the room that is not the current_room.
     """
     connected_rooms = object_relations[door["name"]]
-    for room in connected_rooms:
-        if(current_room != room):
-            return room
+    next_room = [room for room in connected_rooms if room != current_room] 
+    return str(*next_room)
+
 def examine_item(item_name):
     """
     Examine an item which can be a door or furniture.
