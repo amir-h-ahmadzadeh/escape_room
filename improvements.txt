@@ -1,0 +1,7 @@
+Amir: 
+    implemnting comperhensions
+    Arg and Kwargs
+    Regexes in Python
+    OOP
+    test units
+
